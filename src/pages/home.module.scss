@@ -1,1 +1,62 @@
-// TODO
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  .posts {
+    a {
+      display: block;
+
+      &:hover > strong {
+        color: var(--pink-800);
+      }
+
+      strong {
+        font-size: 1.75rem;
+        font-weight: bold;
+        line-height: 2rem;
+        transition: color 0.2s;
+      }
+
+      & > p {
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+        color: var(--gray-200);
+        margin-top: 0.5rem;
+      }
+
+      div {
+        margin-top: 1.5rem;
+        display: flex;
+        align-items: center;
+
+        & > * {
+          display: flex;
+          align-items: center;
+          color: var(--gray-300);
+        }
+
+        time {
+          margin-right: 1.5rem;
+        }
+
+        svg {
+          margin-right: 0.5rem;
+        }
+      }
+
+      & + a {
+        margin-top: 3rem;
+      }
+    }
+  }
+
+  & > button {
+    margin-top: 4rem;
+    font-size: 1.125rem;
+    color: var(--pink-800);
+    background: none;
+    border: none;
+    font-weight: 600;
+  }
+}
