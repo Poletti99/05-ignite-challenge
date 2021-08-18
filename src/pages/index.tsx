@@ -1,3 +1,4 @@
+import pt from 'date-fns/locale/pt';
 import Prismic from '@prismicio/client';
 import { format } from 'date-fns';
 import next, { GetStaticProps } from 'next';
@@ -58,14 +59,20 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map(post => (
-            <Link key={post.uid} href={`/posts/${post.uid}`}>
+            <Link key={post.uid} href={`/post/${post.uid}`}>
               <a>
                 <strong>{post.data.title}</strong>
                 <p>{post.data.subtitle}</p>
                 <div>
                   <time>
                     <FiCalendar size={20} />
-                    <span>{post.first_publication_date}</span>
+                    <span>
+                      {format(
+                        new Date(post.first_publication_date),
+                        'dd MMM yyyy',
+                        { locale: pt }
+                      )}
+                    </span>
                   </time>
                   <p>
                     <FiUser size={20} />
@@ -95,10 +102,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const posts: Post[] = postsResponse.results.map(post => ({
     uid: post.uid || '',
-    first_publication_date: format(
-      new Date(post.first_publication_date),
-      'dd MMM yyyy'
-    ),
+    first_publication_date: post.first_publication_date,
     data: {
       title: post.data.title,
       subtitle: post.data.subtitle,
