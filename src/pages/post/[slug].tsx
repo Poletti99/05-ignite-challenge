@@ -10,6 +10,8 @@ import { getPrismicClient } from '../../services/prismic';
 // import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import { Comments } from '../../components/Comments';
+import ExitPreviewButton from '../../components/ExitPreviewButton';
+import Link from 'next/link';
 
 interface Post {
   first_publication_date: string | null;
@@ -28,11 +30,19 @@ interface Post {
   };
 }
 
-interface PostProps {
-  post: Post;
+interface AnotherPosts {
+  title: string;
+  uid: string;
 }
 
-export default function Post({ post }: PostProps) {
+interface PostProps {
+  post: Post;
+  preview: boolean;
+  prevPost: AnotherPosts;
+  nextPost: AnotherPosts;
+}
+
+export default function Post({ post, preview, nextPost, prevPost }: PostProps) {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -88,7 +98,12 @@ export default function Post({ post }: PostProps) {
           ))}
         </article>
 
+        {prevPost && <Link href={`/post/${prevPost.uid}`}>back</Link>}
+        {nextPost && <Link href={`/post/${nextPost.uid}`}>Next</Link>}
+
         <Comments id="comments-container" />
+
+        {preview && <ExitPreviewButton>Sair do modo preview</ExitPreviewButton>}
       </main>
     </>
   );
@@ -106,10 +121,46 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps<PostProps> = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
   const { slug } = params;
   const prismic = getPrismicClient();
-  const postData = await prismic.getByUID('posts', String(slug), {});
+  const postData = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null,
+  });
+
+  const nextPostData = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: `${postData.id}`,
+      orderings: '[document.first_publication_date]',
+    })
+  ).results[0];
+
+  const prevPostData = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: `${postData.id}`,
+      orderings: '[document.first_publication_date desc]',
+    })
+  ).results[0];
+
+  const prevPost = prevPostData
+    ? {
+        title: prevPostData.data.title,
+        uid: prevPostData.uid,
+      }
+    : null;
+
+  const nextPost = nextPostData
+    ? {
+        title: nextPostData.data.title,
+        uid: nextPostData.uid,
+      }
+    : null;
 
   const post = {
     uid: postData.uid,
@@ -129,7 +180,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   };
 
   return {
-    props: { post },
+    props: { post, preview, prevPost, nextPost },
     redirect: 60 * 30, //30 minutes
   };
 };
