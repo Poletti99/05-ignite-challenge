@@ -154,14 +154,14 @@ export const getStaticProps: GetStaticProps<PostProps> = async ({
 
   const prevPost = prevPostData
     ? {
-        title: prevPostData.data.title,
+        title: prevPostData.data?.title ?? '',
         uid: prevPostData.uid,
       }
     : null;
 
   const nextPost = nextPostData
     ? {
-        title: nextPostData.data.title,
+        title: nextPostData.data?.title ?? '',
         uid: nextPostData.uid,
       }
     : null;
