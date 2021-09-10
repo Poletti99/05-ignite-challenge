@@ -64,5 +64,22 @@
         }
       }
     }
+    hr {
+      border-color: var(--gray-200);
+      border-top: none;
+      opacity: 0.1;
+      margin-top: 4rem;
+    }
+  }
+
+  .otherPosts {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    max-width: 720px;
+    margin: 0 auto;
+    margin-top: 3rem;
+    margin-bottom: 5rem;
   }
 }

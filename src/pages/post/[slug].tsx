@@ -12,6 +12,7 @@ import styles from './post.module.scss';
 import { Comments } from '../../components/Comments';
 import ExitPreviewButton from '../../components/ExitPreviewButton';
 import Link from 'next/link';
+import { OtherPost } from '../../components/OtherPost';
 
 interface Post {
   first_publication_date: string | null;
@@ -96,10 +97,13 @@ export default function Post({ post, preview, nextPost, prevPost }: PostProps) {
               />
             </div>
           ))}
-        </article>
 
-        {prevPost && <Link href={`/post/${prevPost.uid}`}>back</Link>}
-        {nextPost && <Link href={`/post/${nextPost.uid}`}>Next</Link>}
+          <hr />
+        </article>
+        <div className={styles.otherPosts}>
+          <OtherPost post={prevPost} orientation="left" />
+          <OtherPost post={nextPost} orientation="right" />
+        </div>
 
         <Comments id="comments-container" />
 
